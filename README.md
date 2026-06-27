@@ -19,5 +19,14 @@ Data Sources (CSV / bank API)
 - Frontend: React + Tailwind
 - Billing: Stripe
 
-## Live Demo
-[Link coming soon — hosted on Render + Vercel]
+## Backend status (June 2026)
+
+Implemented so far:
+
+- FastAPI health check (`GET /health`)
+- Exception listing (`GET /exceptions`)
+- Exception workflow transition (`POST /exceptions/{id}/transition`)
+- Audit logging of state changes
+- Exact matching engine for bank vs GL transactions
+- Matching API (`POST /matching/exact`)
+- pytest test suite for matching service and matching API
