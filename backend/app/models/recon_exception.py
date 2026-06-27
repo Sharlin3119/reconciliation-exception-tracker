@@ -14,7 +14,7 @@ class ReconException(Base):
     )
     exception_type: Mapped[str] = mapped_column(String(32), nullable=False)
     amount_difference: Mapped[Optional[float]] = mapped_column(Numeric(18, 4), nullable=True)
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="open")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="Open")
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     assigned_to: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
