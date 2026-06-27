@@ -1,6 +1,10 @@
 # Reconciliation Exception Tracker (RET)
 
-Bank-to-GL reconciliation tool for SME accounting teams. Replaces manual spreadsheet workflows with a three-stage automated matching pipeline, exception queue, and audit trail.
+> Bank-to-GL reconciliation for SME accounting teams. Replaces manual spreadsheet triage with a three-stage matching pipeline (exact → fuzzy → rule-based), a structured exception workflow, and a live reporting dashboard.
+
+<!-- Screenshots: see docs/screenshots/ after running the app locally -->
+![Exception Queue](docs/screenshots/exception-queue.png)
+
 
 ## What it does
 
@@ -129,6 +133,17 @@ frontend/
     pages/         # ExceptionQueue, MatchingRun, Dashboard
   vite.config.js   # dev proxy → localhost:8000
 ```
+
+## Screenshots
+
+| Page | File |
+|---|---|
+| Exception Queue (with status badges + Change status button) | `docs/screenshots/exception-queue.png` |
+| Run Matching — results showing confirmed / probable / possible tiers | `docs/screenshots/matching-results.png` |
+| Dashboard — KPI cards + status bar chart | `docs/screenshots/dashboard.png` |
+| Matching Rules — list with edit/delete actions | `docs/screenshots/rules.png` |
+
+**To capture:** start both servers (`uvicorn` + `npm run dev`), run `python seed_demo.py` from `backend/`, open `http://localhost:5173`, and screenshot each page at 1440px width. Save into `docs/screenshots/`.
 
 ## Known stubs
 
