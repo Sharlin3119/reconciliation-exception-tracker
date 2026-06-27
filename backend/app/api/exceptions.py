@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.db import get_db
+from app.models.recon_exception import ReconException
 from app.services.exception_service import transition_exception
 
 router = APIRouter(prefix="/exceptions", tags=["exceptions"])
@@ -24,6 +25,24 @@ class TransitionResponse(BaseModel):
     resolved_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
+
+
+class ExceptionSummary(BaseModel):
+    id: int
+    exception_type: str
+    status: str
+    amount_difference: Optional[float] = None
+    assigned_to: Optional[str] = None
+    created_at: datetime
+    resolved_at: Optional[datetime] = None
+
+    model_config = {"from_attributes": True}
+
+
+@router.get("", response_model=list[ExceptionSummary])
+def list_exceptions(db: Session = Depends(get_db)) -> list[ExceptionSummary]:
+    rows = db.query(ReconException).all()
+    return [ExceptionSummary.model_validate(r) for r in rows]
 
 
 @router.post("/{exception_id}/transition", response_model=TransitionResponse)
