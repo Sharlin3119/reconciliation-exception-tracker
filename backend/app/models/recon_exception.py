@@ -9,6 +9,7 @@ class ReconException(Base):
     __tablename__ = "recon_exceptions"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tenant_id: Mapped[str] = mapped_column(String(128), nullable=False, default="dev")
     transaction_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("transactions.id"), nullable=True
     )

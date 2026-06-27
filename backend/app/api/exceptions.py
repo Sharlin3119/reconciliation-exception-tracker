@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -40,8 +40,11 @@ class ExceptionSummary(BaseModel):
 
 
 @router.get("", response_model=list[ExceptionSummary])
-def list_exceptions(db: Session = Depends(get_db)) -> list[ExceptionSummary]:
-    rows = db.query(ReconException).all()
+def list_exceptions(
+    x_tenant_id: str = Header(default="dev"),
+    db: Session = Depends(get_db),
+) -> list[ExceptionSummary]:
+    rows = db.query(ReconException).filter(ReconException.tenant_id == x_tenant_id).all()
     return [ExceptionSummary.model_validate(r) for r in rows]
 
 

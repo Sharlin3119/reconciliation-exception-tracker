@@ -11,6 +11,7 @@ class TransactionRecord:
     transaction_date: date
     id: Optional[int] = None
     source: Optional[str] = None
+    description: Optional[str] = None
 
 
 @dataclass

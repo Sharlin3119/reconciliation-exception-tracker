@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media print {
+  header, .print\:hidden { display: none !important; }
+  body { background: white; }
+  main { max-width: 100% !important; padding: 1rem !important; }
+}
