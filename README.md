@@ -1,76 +1,140 @@
 # Reconciliation Exception Tracker (RET)
 
-Bank-to-GL reconciliation tool for SME accounting teams. Replaces manual 
-spreadsheet workflows with an automated matching engine and audit trail.
+Bank-to-GL reconciliation tool for SME accounting teams. Replaces manual spreadsheet workflows with a three-stage automated matching pipeline, exception queue, and audit trail.
+
+## What it does
+
+| Capability | Detail |
+|---|---|
+| **Matching pipeline** | Exact → fuzzy (rapidfuzz) → rule-based, in that order |
+| **Exception workflow** | Open → Assigned → In Review → Resolved, with audit log |
+| **Matching rules** | Configurable per-tenant tolerances (amount ±$, date ±days) |
+| **Reporting dashboard** | Live KPI cards, status breakdown, type breakdown |
+| **PDF export** | Print-to-PDF via browser print dialog |
+| **Tenant isolation** | Every query scoped to `X-Tenant-ID`; no cross-tenant leakage |
+| **Billing** | Stubbed — see [Known stubs](#known-stubs) |
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Python 3.9+, FastAPI, SQLAlchemy |
+| Database | SQLite (dev/demo) — swap `db.py` URL for PostgreSQL in production |
+| Matching | rapidfuzz |
+| Frontend | React 18, Vite, Tailwind CSS |
 
 ## Architecture
-Data Sources (CSV / bank API)
-  → Ingestion & Normalisation Layer
-  → Matching Engine (exact → fuzzy → rule-based)
-  → Exception Queue
-  → Workflow Engine (assign / resolve / escalate)
-  → Audit Log
-  → Reporting Dashboard
 
-## Tech Stack
-- Backend: Python + FastAPI
-- Database: PostgreSQL
-- Matching: pandas + rapidfuzz
-- Frontend: React + Tailwind
-- Billing: Stripe
-
-## Backend status (June 2026)
-
-Implemented so far:
-
-- FastAPI health check (`GET /health`)
-- Exception listing (`GET /exceptions`)
-- Exception workflow transition (`POST /exceptions/{id}/transition`)
-- Audit logging of state changes
-- Exact matching engine for bank vs GL transactions
-- Matching API (`POST /matching/exact`)
-- pytest test suite for matching service and matching API
-## Running the backend locally
-
-Prerequisites:
-- Python 3.11+
-- Git
-- Virtualenv or `python -m venv`
-
-### 1. Clone and install
-
-```bash
-git clone https://github.com/Sharlin3119/reconciliation-exception-tracker.git
-cd reconciliation-exception-tracker/backend
-
-python -m venv .venv
-source .venv/bin/activate
-
-pip install -r backend/requirements.txt
+```
+Bank CSV / GL export
+        │
+        ▼
+ POST /matching/run
+        │
+   ┌────┴──────────────────────────┐
+   │  Stage 1: Exact match         │  → confirmed_matches  (no review needed)
+   │  Stage 2: Fuzzy match         │  → probable_matches   (human review)
+   │  Stage 3: Rule-based match    │  → possible_matches   (explicit approval)
+   └───────────────────────────────┘
+        │
+        ▼
+ Exception Queue  ←→  Workflow transitions  ←→  Audit Log
+        │
+        ▼
+ Reporting Dashboard  →  PDF export
 ```
 
-### 2. Start the API server
+## Quick start
 
-From the `backend` directory:
+**Prerequisites:** Python 3.9+, Node.js 18+
+
+### Backend
 
 ```bash
-source .venv/bin/activate
+cd backend
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python seed_demo.py              # creates ret.db with demo data
 uvicorn app.main:app --reload
 ```
 
-The API will be available at `http://127.0.0.1:8000`.
+API: **http://localhost:8000**  
+Swagger UI: **http://localhost:8000/docs**
 
-Useful URLs:
-- Swagger UI: `http://127.0.0.1:8000/docs`
-- Health check: `GET http://127.0.0.1:8000/health`
-
-### 3. Run tests
-
-From the `backend` directory:
+### Frontend
 
 ```bash
-source .venv/bin/activate
-pytest backend/tests
+cd frontend
+npm install
+npm run dev
 ```
 
-This runs both the matching engine unit tests and the `/matching/exact` API tests.
+UI: **http://localhost:5173**
+
+## Demo walkthrough
+
+With both servers running, open **http://localhost:5173**.
+
+1. **Exception Queue** — 7 seeded exceptions across all workflow statuses. Click "Change status" to transition any exception; the state machine enforces valid transitions.
+
+2. **Run Matching** — Pre-filled demo JSON shows the three matching stages. Click "Run pipeline" to see confirmed / probable / possible matches with confidence scores. Edit the bank or GL JSON to test your own data.
+
+3. **Matching Rules** — 3 pre-seeded rules. Create, edit, or delete rules; active rules are applied in the pipeline's rule-based stage.
+
+4. **Dashboard** — Live KPI summary of all exceptions. Click "Export PDF" to generate a report via the browser print dialog.
+
+## API reference
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/health` | Liveness check |
+| GET | `/exceptions` | List exceptions (tenant-scoped) |
+| POST | `/exceptions/{id}/transition` | Transition exception status |
+| POST | `/matching/exact` | Exact-only match |
+| POST | `/matching/run` | Full 3-stage pipeline |
+| GET | `/rules` | List matching rules |
+| POST | `/rules` | Create rule |
+| PUT | `/rules/{id}` | Update rule |
+| DELETE | `/rules/{id}` | Delete rule |
+| GET | `/reporting/summary` | Aggregated KPIs (tenant-scoped) |
+| GET | `/billing/plan` | Billing info (stub) |
+
+All endpoints read `X-Tenant-ID` header (defaults to `"dev"`).
+
+## Running tests
+
+```bash
+cd backend
+python -m pytest tests/ -q
+# 81 tests, ~0.4 s
+```
+
+## Project structure
+
+```
+backend/
+  app/
+    api/           # route handlers — logic lives in services/
+    models/        # SQLAlchemy models
+    services/      # matching engine, fuzzy, rules, pipeline, exceptions
+  tests/           # 81 unit + integration tests
+  seed_demo.py     # idempotent demo data seeder
+  requirements.txt
+
+frontend/
+  src/
+    api/           # fetch wrappers per domain
+    components/    # RuleForm, RuleList
+    pages/         # ExceptionQueue, MatchingRun, Dashboard
+  vite.config.js   # dev proxy → localhost:8000
+```
+
+## Known stubs
+
+| Area | Status | Notes |
+|---|---|---|
+| **Billing** | Stub | `GET /billing/plan` returns hardcoded demo values. Marked `# STRIPE_STUB` in `backend/app/api/billing.py`. |
+| **Auth** | Dev placeholder | `X-Tenant-ID` is trusted as-is. Replace with JWT extraction before production. UI always sends `"dev"`. |
+| **Database** | SQLite | Change `SQLALCHEMY_DATABASE_URL` in `backend/app/db.py` to a PostgreSQL URL for production. |
+| **File ingestion** | Not implemented | Pipeline accepts JSON via API. CSV upload is a natural next step. |

@@ -222,3 +222,10 @@ __marimo__/
 # Frontend
 frontend/node_modules/
 frontend/dist/
+
+# SQLite database — seeded locally via seed_demo.py, not committed
+backend/ret.db
+
+# Agent loop state (dev tooling)
+backend/agent_loop.py
+agent_loop_state.json
