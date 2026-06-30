@@ -110,7 +110,7 @@ All endpoints read `X-Tenant-ID` header (defaults to `"dev"`).
 ```bash
 cd backend
 python -m pytest tests/ -q
-# 81 tests, ~0.4 s
+# 83 tests, ~0.4 s
 ```
 
 ## Project structure
@@ -121,7 +121,7 @@ backend/
     api/           # route handlers — logic lives in services/
     models/        # SQLAlchemy models
     services/      # matching engine, fuzzy, rules, pipeline, exceptions
-  tests/           # 81 unit + integration tests
+  tests/           # 83 unit + integration tests
   seed_demo.py     # idempotent demo data seeder
   requirements.txt
 
@@ -149,4 +149,4 @@ frontend/
 | **Billing** | Stub | `GET /billing/plan` returns hardcoded demo values. Marked `# STRIPE_STUB` in `backend/app/api/billing.py`. |
 | **Auth** | Dev placeholder | `X-Tenant-ID` is trusted as-is. Replace with JWT extraction before production. UI always sends `"dev"`. |
 | **Database** | SQLite | Change `SQLALCHEMY_DATABASE_URL` in `backend/app/db.py` to a PostgreSQL URL for production. |
-| **File ingestion** | Not implemented | Pipeline accepts JSON via API. CSV upload is a natural next step. |
+| **File ingestion** | CSV upload | `POST /files/upload` validates CSV files and `POST /files/run_matching_from_upload` runs the matching pipeline directly from an uploaded CSV. Pipeline also accepts JSON via API. |
