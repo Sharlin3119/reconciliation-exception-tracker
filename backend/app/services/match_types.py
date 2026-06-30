@@ -1,13 +1,3 @@
-from enum import Enum
-
-
-class MatchCategory(str, Enum):
-    CONFIRMED = "confirmed"   # exact match, auto-accepted
-    PROBABLE  = "probable"    # fuzzy match, human review required
-    POSSIBLE  = "possible"    # rule-based match, explicit approval required
-    UNMATCHED = "unmatched"   # no match found at any stage
-
-
 def exact_confidence() -> float:
     return 1.0
 

@@ -1,16 +1,8 @@
 from app.services.match_types import (
-    MatchCategory,
     exact_confidence,
     fuzzy_confidence,
     rule_confidence,
 )
-
-
-def test_enum_values():
-    assert MatchCategory.CONFIRMED == "confirmed"
-    assert MatchCategory.PROBABLE  == "probable"
-    assert MatchCategory.POSSIBLE  == "possible"
-    assert MatchCategory.UNMATCHED == "unmatched"
 
 
 def test_exact_confidence_is_always_one():
