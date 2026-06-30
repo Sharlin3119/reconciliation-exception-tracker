@@ -106,28 +106,16 @@ export default function Upload() {
           <div className="mt-4">
             <h2 className="text-sm font-medium text-gray-700 mb-2">Results</h2>
             <div className="space-y-2">
-              {Array.isArray(response)
-                ? response.map((item, idx) => {
-                    const allowed = item.allowed ?? item.Allowed ?? false;
-                    return (
-                      <div key={idx} className="flex items-center">
-                        <span className="flex-1 text-sm">{item.filename || item.FileName || `File ${idx + 1}`}</span>
-                        <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
-                          allowed ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                        }`}>
-                          {allowed ? "Allowed" : "Not allowed"}
-                        </span>
-                      </div>
-                    );
-                  })
-                : Object.entries(response).map(([key, value]) => (
-                    <div key={key} className="flex items-center">
-                      <span className="flex-1 text-sm">{key}</span>
-                      <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                        {value ? "Allowed" : "Not allowed"}
-                      </span>
-                    </div>
-                  ))}
+              {response.files.map((item, idx) => (
+                <div key={idx} className="flex items-center">
+                  <span className="flex-1 text-sm">{item.filename}</span>
+                  <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
+                    item.allowed ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                  }`}>
+                    {item.allowed ? "Allowed" : "Not allowed"}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         )}
