@@ -1,10 +1,7 @@
-from decimal import Decimal
-
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.models.matching_rule import MatchingRule
-from app.services.rule_matcher import RuleConfig
 
 
 def list_rules(db: Session, tenant_id: str) -> list[MatchingRule]:
@@ -73,19 +70,3 @@ def delete_rule(db: Session, rule_id: int, tenant_id: str) -> None:
     rule = get_rule(db, rule_id, tenant_id)
     db.delete(rule)
     db.commit()
-
-
-def active_rules_as_configs(db: Session, tenant_id: str) -> list[RuleConfig]:
-    rules = (
-        db.query(MatchingRule)
-        .filter(MatchingRule.tenant_id == tenant_id, MatchingRule.is_active.is_(True))
-        .all()
-    )
-    return [
-        RuleConfig(
-            amount_tolerance=Decimal(str(r.amount_tolerance)),
-            date_tolerance_days=r.date_tolerance_days,
-            requires_approval=r.requires_approval,
-        )
-        for r in rules
-    ]
