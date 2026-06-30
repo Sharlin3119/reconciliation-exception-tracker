@@ -5,12 +5,14 @@ import RuleForm from "./components/RuleForm";
 import ExceptionQueue from "./pages/ExceptionQueue";
 import MatchingRun from "./pages/MatchingRun";
 import Dashboard from "./pages/Dashboard";
+import Upload from "./pages/Upload";
 
 const NAV = [
   { id: "exceptions", label: "Exception Queue" },
   { id: "matching",   label: "Run Matching" },
   { id: "rules",      label: "Matching Rules" },
   { id: "dashboard",  label: "Dashboard" },
+  { id: "upload",     label: "Upload" },
 ];
 
 export default function App() {
@@ -65,48 +67,50 @@ export default function App() {
         ))}
       </header>
 
-      <main className="max-w-5xl mx-auto px-8 py-8">
-        {page === "exceptions" && <ExceptionQueue />}
+       <main className="max-w-5xl mx-auto px-8 py-8">
+         {page === "exceptions" && <ExceptionQueue />}
 
-        {page === "matching" && <MatchingRun />}
+         {page === "matching" && <MatchingRun />}
 
-        {page === "dashboard" && <Dashboard />}
+         {page === "dashboard" && <Dashboard />}
 
-        {page === "rules" && (
-          <>
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-800">Matching Rules</h2>
-                <p className="text-sm text-gray-500 mt-0.5">
-                  Configure rule-based matching tolerances.
-                </p>
-              </div>
-              <button
-                onClick={handleNew}
-                className="px-4 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                + New rule
-              </button>
-            </div>
+          {page === "upload" && <Upload onNavigate={(pageId) => setPage(pageId)} />}
 
-            {loadError && (
-              <p className="text-sm text-red-600 mb-4">Failed to load rules: {loadError}</p>
-            )}
+         {page === "rules" && (
+           <>
+             <div className="flex items-center justify-between mb-4">
+               <div>
+                 <h2 className="text-xl font-semibold text-gray-800">Matching Rules</h2>
+                 <p className="text-sm text-gray-500 mt-0.5">
+                   Configure rule-based matching tolerances.
+                 </p>
+               </div>
+               <button
+                 onClick={handleNew}
+                 className="px-4 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+               >
+                 + New rule
+               </button>
+             </div>
 
-            <RuleList rules={rules} onEdit={handleEdit} onDelete={handleDelete} />
+             {loadError && (
+               <p className="text-sm text-red-600 mb-4">Failed to load rules: {loadError}</p>
+             )}
 
-            {showForm && (
-              <div className="mt-8">
-                <RuleForm
-                  initialValues={editingRule}
-                  onSaved={handleSaved}
-                  onCancel={handleCancel}
-                />
-              </div>
-            )}
-          </>
-        )}
-      </main>
+             <RuleList rules={rules} onEdit={handleEdit} onDelete={handleDelete} />
+
+             {showForm && (
+               <div className="mt-8">
+                 <RuleForm
+                   initialValues={editingRule}
+                   onSaved={handleSaved}
+                   onCancel={handleCancel}
+                 />
+               </div>
+             )}
+           </>
+         )}
+       </main>
     </div>
   );
 }
