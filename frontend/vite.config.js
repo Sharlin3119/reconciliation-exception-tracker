@@ -10,6 +10,7 @@ export default defineConfig({
       "/matching": "http://localhost:8000",
       "/exceptions": "http://localhost:8000",
       "/reporting": "http://localhost:8000",
+      "/files": "http://localhost:8000",
       "/billing": "http://localhost:8000",
       "/health": "http://localhost:8000",
     },
