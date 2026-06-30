@@ -1,12 +1,6 @@
+import { HEADERS } from "./_shared";
+
 const BASE = "/rules";
-
-// Phase 3: replace DEV_TENANT_ID with value from auth token/session.
-const DEV_TENANT_ID = "dev";
-
-const HEADERS = {
-  "Content-Type": "application/json",
-  "X-Tenant-ID": DEV_TENANT_ID,
-};
 
 export async function fetchRules() {
   const res = await fetch(BASE, { headers: HEADERS });
