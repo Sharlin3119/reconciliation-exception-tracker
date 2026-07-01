@@ -49,7 +49,11 @@ export default function Upload({ onNavigate }) {
       setSummary(data);
     } catch (err) {
       // Keep selected files so the user can retry.
-      setError("Matching run failed. Is the backend running?");
+      setError(
+        err instanceof TypeError
+          ? "Matching run failed. Is the backend running?"
+          : err.message
+      );
     } finally {
       setLoading(false);
     }

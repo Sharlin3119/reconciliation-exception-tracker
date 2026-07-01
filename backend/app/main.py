@@ -9,6 +9,7 @@ from app.api.matching import router as matching_router
 from app.api.rules import router as rules_router
 from app.api.reporting import router as reporting_router
 from app.api.billing import router as billing_router
+from app.api.files import router as files_router
 from app.db import engine
 from app.models import Base
 
@@ -35,3 +36,4 @@ app.include_router(matching_router)
 app.include_router(rules_router)
 app.include_router(reporting_router)
 app.include_router(billing_router)
+app.include_router(files_router)

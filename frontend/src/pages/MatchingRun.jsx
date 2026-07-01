@@ -140,9 +140,12 @@ export default function MatchingRun() {
   return (
     <div>
       <div className="mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Run Matching Pipeline</h2>
+        <h2 className="text-xl font-semibold text-gray-800">Matching Preview</h2>
         <p className="text-sm text-gray-500 mt-0.5">
-          Paste bank and GL records as JSON arrays, then run exact → fuzzy → rule-based matching.
+          Paste bank and GL records as JSON arrays to preview exact → fuzzy → rule-based
+          matching, including confidence scores. This is a sandbox — nothing is saved.
+          To reconcile real data and create exceptions, use{" "}
+          <span className="font-medium text-gray-600">Upload</span>.
         </p>
       </div>
 

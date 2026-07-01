@@ -229,3 +229,5 @@ backend/ret.db
 # Agent loop state (dev tooling)
 backend/agent_loop.py
 agent_loop_state.json
+.claude/
+backend/orchestration/

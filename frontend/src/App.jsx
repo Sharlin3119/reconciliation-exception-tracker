@@ -9,7 +9,7 @@ import Upload from "./pages/Upload";
 
 const NAV = [
   { id: "exceptions", label: "Exception Queue" },
-  { id: "matching",   label: "Run Matching" },
+  { id: "matching",   label: "Matching Preview" },
   { id: "rules",      label: "Matching Rules" },
   { id: "dashboard",  label: "Dashboard" },
   { id: "upload",     label: "Upload" },
